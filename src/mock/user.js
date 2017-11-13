@@ -101,6 +101,7 @@ module.exports = {
         maxAge: 900000,
         httpOnly: true,
       })
+      console.log('mock return login res')
       res.json({ success: true, message: 'Ok' })
     } else {
       res.status(400).end()
@@ -117,22 +118,27 @@ module.exports = {
     const cookies = qs.parse(cookie.replace(/\s/g, ''), { delimiter: ';' })
     const response = {}
     const user = {}
-    if (!cookies.token) {
-      res.status(200).send({ message: 'Not Login' })
-      return
-    }
-    const token = JSON.parse(cookies.token)
-    if (token) {
-      response.success = token.deadline > new Date().getTime()
-    }
-    if (response.success) {
-      const userItem = adminUsers.filter(_ => _.id === token.id)
-      if (userItem.length > 0) {
-        user.permissions = userItem[0].permissions
-        user.username = userItem[0].username
-        user.id = userItem[0].id
-      }
-    }
+    // if (!cookies.token) {
+    //   res.status(200).send({ message: 'Not Login' })
+    //   return
+    // }
+    // const token = JSON.parse(cookies.token)
+    // if (token) {
+    //   response.success = token.deadline > new Date().getTime()
+    // }
+    // if (response.success) {
+    //   const userItem = adminUsers.filter(_ => _.id === token.id)
+    //   if (userItem.length > 0) {
+    //     user.permissions = userItem[0].permissions
+    //     user.username = userItem[0].username
+    //     user.id = userItem[0].id
+    //   }
+    // }
+
+    response.success = true
+    user.permissions = adminUsers[0].permissions
+    user.username = adminUsers[0].username
+    user.id = adminUsers[0].id
     response.user = user
     res.json(response)
   },

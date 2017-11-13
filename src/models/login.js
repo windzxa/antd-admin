@@ -12,6 +12,7 @@ export default {
     }, { put, call, select }) {
       const data = yield call(login, payload)
       const { locationQuery } = yield select(_ => _.app)
+      console.log(data)
       if (data.success) {
         const { from } = locationQuery
         yield put({ type: 'app/query' })

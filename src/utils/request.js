@@ -17,41 +17,41 @@ const fetch = (options) => {
 
   const cloneData = lodash.cloneDeep(data)
 
-  try {
-    let domin = ''
-    if (url.match(/[a-zA-z]+:\/\/[^/]*/)) {
-      domin = url.match(/[a-zA-z]+:\/\/[^/]*/)[0]
-      url = url.slice(domin.length)
-    }
-    const match = pathToRegexp.parse(url)
-    url = pathToRegexp.compile(url)(data)
-    for (let item of match) {
-      if (item instanceof Object && item.name in cloneData) {
-        delete cloneData[item.name]
-      }
-    }
-    url = domin + url
-  } catch (e) {
-    message.error(e.message)
-  }
-
-  if (fetchType === 'JSONP') {
-    return new Promise((resolve, reject) => {
-      jsonp(url, {
-        param: `${qs.stringify(data)}&callback`,
-        name: `jsonp_${new Date().getTime()}`,
-        timeout: 4000,
-      }, (error, result) => {
-        if (error) {
-          reject(error)
-        }
-        resolve({ statusText: 'OK', status: 200, data: result })
-      })
-    })
-  } else if (fetchType === 'YQL') {
-    url = `http://query.yahooapis.com/v1/public/yql?q=select * from json where url='${options.url}?${encodeURIComponent(qs.stringify(options.data))}'&format=json`
-    data = null
-  }
+  // try {
+  //   let domin = ''
+  //   if (url.match(/[a-zA-z]+:\/\/[^/]*/)) {
+  //     domin = url.match(/[a-zA-z]+:\/\/[^/]*/)[0]
+  //     url = url.slice(domin.length)
+  //   }
+  //   const match = pathToRegexp.parse(url)
+  //   url = pathToRegexp.compile(url)(data)
+  //   for (let item of match) {
+  //     if (item instanceof Object && item.name in cloneData) {
+  //       delete cloneData[item.name]
+  //     }
+  //   }
+  //   url = domin + url
+  // } catch (e) {
+  //   message.error(e.message)
+  // }
+  //
+  // if (fetchType === 'JSONP') {
+  //   return new Promise((resolve, reject) => {
+  //     jsonp(url, {
+  //       param: `${qs.stringify(data)}&callback`,
+  //       name: `jsonp_${new Date().getTime()}`,
+  //       timeout: 4000,
+  //     }, (error, result) => {
+  //       if (error) {
+  //         reject(error)
+  //       }
+  //       resolve({ statusText: 'OK', status: 200, data: result })
+  //     })
+  //   })
+  // } else if (fetchType === 'YQL') {
+  //   url = `http://query.yahooapis.com/v1/public/yql?q=select * from json where url='${options.url}?${encodeURIComponent(qs.stringify(options.data))}'&format=json`
+  //   data = null
+  // }
 
   switch (method.toLowerCase()) {
     case 'get':
@@ -88,6 +88,7 @@ export default function request (options) {
   }
 
   return fetch(options).then((response) => {
+    console.log("fetch response")
     const { statusText, status } = response
     let data = options.fetchType === 'YQL' ? response.data.query.results.json : response.data
     if (data instanceof Array) {
@@ -102,6 +103,7 @@ export default function request (options) {
       ...data,
     })
   }).catch((error) => {
+    console.log("fetch error")
     const { response } = error
     let msg
     let statusCode
